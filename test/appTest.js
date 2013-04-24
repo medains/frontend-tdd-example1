@@ -1,12 +1,11 @@
-var App  = require( '../scripts/app' ),
-    thing = require( '../scripts/thing' ),
-    sinon = require( 'sinon' ),
-    assert = require( 'assert' ),
-    util = require( 'util' );
+var app = require('../src/app'),
+      assert = require('assert');
 
 describe( 'App', function(){
-    it( 'returnFalse', function() {
-        sinon.stub(thing, "specialFunc").returns(5);
-        assert.ok( !App.returnFalse() );
+  it( 'has an asyncronous init function', function(done){
+    assert.ok( typeof app.init == 'function' );
+    app.init(function(){
+      done();
     });
+  });
 });

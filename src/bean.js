@@ -1,0 +1,1 @@
+../node_modules/bean/bean.min.js

@@ -26,7 +26,7 @@ describe( 'App', function(){
           done();
       });
       it( 'fetchInput fetches input value using selector+dom', function( done ) {
-          app.selector.returns( {} );
+          app.selector.returns( [{}] );
           app.dom.returns( { val: function(){ return '7'; } } );
           app.fetchInput( function(value) {
               assert.equal( value, '7' );
@@ -34,7 +34,7 @@ describe( 'App', function(){
           });
       });
       it( 'writeOutput saves value using selector+dom', function( done ) {
-          app.selector.returns( {} );
+          app.selector.returns( [{}] );
           var textFunc = sinon.spy();
           app.dom.returns( { text: textFunc } );
           app.writeOutput( 'XVI', function(response) {

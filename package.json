@@ -1,0 +1,15 @@
+{
+    "name": "tdd-frontend",
+    "version": "0.1.0",
+    "dependencies": {
+        "require": "latest",
+        "bean": "latest",
+        "bonzo": "latest",
+        "qwery": "latest"
+    },
+    "devDependencies": {
+        "mocha": "latest",
+        "jsdom": "latest",
+        "sinon": "latest"
+    }
+}

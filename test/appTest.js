@@ -17,10 +17,36 @@ describe( 'App', function(){
   });
   describe('Convert', function() {
       it( 'returns errors', function(){
-          assert.equal( 'Number out of range', app.convertArabicToRoman( '4000' ), '4000 error not shown' );
-          assert.equal( 'Number out of range', app.convertArabicToRoman( '-1' ), '-1 error not shown' );
-          assert.equal( 'Cannot convert', app.convertArabicToRoman( 'dsfa' ), 'string error not shown' );
-          assert.equal( 'Cannot convert', app.convertArabicToRoman( '7 years' ), 'string error not shown' );
+          var pass = true;
+          try {
+              app.convertArabicToRoman( '4000' );
+              pass = false;
+          }
+          catch( e ) {
+              assert.equal( 'Number out of range', e.message );
+          }
+          try {
+              app.convertArabicToRoman( '-1' );
+              pass = false;
+          }
+          catch( e ) {
+              assert.equal( 'Number out of range', e.message );
+          }
+          try {
+              app.convertArabicToRoman( 'dfjlsf' );
+              pass = false;
+          }
+          catch( e ) {
+              assert.equal( 'Cannot convert', e.message );
+          }
+          try {
+              app.convertArabicToRoman( '7 years' );
+              pass = false;
+          }
+          catch( e ) {
+              assert.equal( 'Cannot convert', e.message );
+          }
+          assert.ok(pass, 'Exception not thrown' );
       });
       it( 'converts single digits', function(){
           assert.equal( '', app.convertArabicToRoman( '0' ), '0 != ""' );
@@ -67,7 +93,7 @@ describe( 'App', function(){
       });
   });
   describe('Action', function() {
-      before(function(done){
+      beforeEach(function(done){
           sinon.stub( app, 'fetchInput' ).yields( '12' );
           sinon.stub( app, 'writeOutput' ).yields();
           sinon.stub( app, 'convertArabicToRoman' ).returns( 'VII' );
@@ -77,6 +103,11 @@ describe( 'App', function(){
           app.action({ stop: sinon.stub() } );
           sinon.assert.calledWith(app.convertArabicToRoman, '12' );
           sinon.assert.calledWith(app.writeOutput, 'VII' );
+      });
+      it( 'catches errors, writes them, flagged', function() {
+          app.convertArabicToRoman.throws( new Error( 'foobar' ) );
+          app.action({ stop:sinon.stub() } );
+          sinon.assert.calledWith(app.writeOutput, 'foobar', true );
       });
   });
   describe('Dom related', function() {
@@ -101,10 +132,27 @@ describe( 'App', function(){
       });
       it( 'writeOutput saves value using selector+dom', function( done ) {
           app.selector.returns( [{}] );
-          var textFunc = sinon.spy();
+          var removeFunc = sinon.spy();
+          var addFunc = sinon.stub().returns( { removeClass: removeFunc } );
+          var textFunc = sinon.stub().returns( { addClass: addFunc } );
           app.dom.returns( { text: textFunc } );
           app.writeOutput( 'XVI', function(response) {
               sinon.assert.calledWith( textFunc, 'XVI' );
+              sinon.assert.calledWith( addFunc, 'alert-success' );
+              sinon.assert.calledWith( removeFunc, 'alert-error' );
+              done();
+          });
+      });
+      it( 'writeOutput saves error using selector+dom', function( done ) {
+          app.selector.returns( [{}] );
+          var removeFunc = sinon.spy();
+          var addFunc = sinon.stub().returns( { removeClass: removeFunc } );
+          var textFunc = sinon.stub().returns( { addClass: addFunc } );
+          app.dom.returns( { text: textFunc } );
+          app.writeOutput( 'error', true, function(response) {
+              sinon.assert.calledWith( textFunc, 'error' );
+              sinon.assert.calledWith( addFunc, 'alert-error' );
+              sinon.assert.calledWith( removeFunc, 'alert-success' );
               done();
           });
       });

@@ -4,20 +4,19 @@
 <meta charset="utf-8">
 <title>TDD Frontend</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css"/>
 <script data-main="build/main" src="build/lib/require.js"></script>
 </head>
 <body>
 
-<div>
+<div class="container">
+  <h1>TDD Frontend</h1>
   <div>
-    <h1>TDD Frontend</h1>
-  </div>
-  <div>
-      <form id="converter">
+      <form id="converter" class="form-inline">
           <input type="text" id="field1" value="12"/>
-          <button id="convert">Convert to Roman Numeral</button>
+          <button id="convert" class="btn btn=primary">Convert to Roman Numeral</button>
       </form>
-      <span id="output"></span>
+      <span style="margin-right: 20px;">Answer:</span><span id="output" class="alert"></span>
   </div>
 </div>
 

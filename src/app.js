@@ -35,7 +35,6 @@ function _doConvert( arabic, single, five, ten ) {
     throw new Error( 'Number out of range' );
 }
 App.convertArabicToRoman = function(arabic){
-    try{
     var thousands = _doConvert( Math.floor(arabic / 1000), "M" );
     arabic = arabic % 1000;
     var hundreds = _doConvert( Math.floor(arabic / 100), "C", "D", "M" );
@@ -43,15 +42,17 @@ App.convertArabicToRoman = function(arabic){
     var tens = _doConvert( Math.floor(arabic / 10), "X", "L", "C" );
     arabic = arabic % 10;
     return thousands + hundreds + tens + _doConvert( arabic, "I", "V", "X" );
-    } catch( e ) {
-        return e.message;
-    }
 }
 App.action= function(e) {
         var self = this;
         self.fetchInput( function(value) {
-            var ret = self.convertArabicToRoman( value );
-            self.writeOutput( ret, function(){});
+            try{
+                var ret = self.convertArabicToRoman( value );
+                self.writeOutput( ret, function(){});
+            }
+            catch( e ) {
+                self.writeOutput( e.message, true, function(){});
+            }
         });
         e.stop();
     };
@@ -62,8 +63,12 @@ App.init= function( callback ) {
 App.fetchInput= function( callback /*value*/ ){
         callback( this.dom( this.selector('#field1') ).val() );
     };
-App.writeOutput= function( value, callback ){
-        callback( this.dom( this.selector('#output') ).text( value ) );
+App.writeOutput= function( value, error, callback ){
+        if( callback === undefined ) {
+            callback = error;
+            error = false;
+        }
+        callback( this.dom( this.selector('#output') ).text( value ).addClass( error ? 'alert-error' : 'alert-success').removeClass( error ? 'alert-success' : 'alert-error' ) );
     };
 
 module.exports = App;
